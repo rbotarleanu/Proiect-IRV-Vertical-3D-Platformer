@@ -24,7 +24,7 @@ public class LevelManager {
 
     public static void LoadSceneAsync(string sceneIndex)
     {
-        // OnLoadStart(); 
+        OnLoadStart(); 
         loadingInfo = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
         GameManager.GetInstance().StartCoroutine(Update());
     }

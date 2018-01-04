@@ -5,22 +5,21 @@ using UnityEngine.UI;
 
 public class LoadingBar : MonoBehaviour
 {
+    public Slider loadingBar; // set from the unity editor
 
-    public Slider loadingBar;
-
-    // Use this for initialization
     void Start()
     {
-        gameObject.SetActive(false);
+        gameObject.SetActive(false); // loading screen is only active during async loading
 
-        LevelManager.OnLoadStart += () =>
+        LevelManager.OnLoadStart += () => // show the loading screen during loading
         {
             gameObject.SetActive(true);
         };
 
-        LevelManager.OnLoadChange += ((float value) =>
+        LevelManager.OnLoadChange += ((float value) => // update slider during loading
         {
             loadingBar.value = value;
+            Debug.Log("Loading bar value: " + value);
             if (value == 1)
             {
                 gameObject.SetActive(false);

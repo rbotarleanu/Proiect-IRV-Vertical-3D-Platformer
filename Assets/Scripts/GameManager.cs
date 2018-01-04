@@ -19,7 +19,6 @@ public class GameManager : MonoBehaviour {
     {
         if (!instance)
         {
-            Debug.Log("Instantiating new GameManager");
             instance = this;
             DontDestroyOnLoad(this);
         } else
