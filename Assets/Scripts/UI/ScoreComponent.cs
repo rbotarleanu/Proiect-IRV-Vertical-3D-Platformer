@@ -10,6 +10,17 @@ public class ScoreComponent : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         score.text = "0";
+        gameObject.SetActive(false);
+
+        GameManager.OnStateChange += ((GameManager.GameState newState) => {
+            if (newState == GameManager.GameState.InGame) {
+                gameObject.SetActive(true);
+            } else {
+                if (gameObject.activeSelf == true)
+                    gameObject.SetActive(false);
+            }
+        });
+
         UserResources.OnCoinCollected += (() =>
         {
             score.text = UserResources.coins.ToString();

@@ -15,16 +15,19 @@ public class LevelManager {
     {
         while (!loadingInfo.isDone)
         {
-            OnLoadChange(loadingInfo.progress);
+            if (OnLoadChange != null)
+                OnLoadChange(loadingInfo.progress);
             yield return new WaitForEndOfFrame();
         }
 
-        OnLoadChange(loadingInfo.progress);
+        if (OnLoadChange != null)
+            OnLoadChange(loadingInfo.progress);
     }
 
     public static void LoadSceneAsync(string sceneIndex)
     {
-        OnLoadStart(); 
+        if (OnLoadStart != null)
+            OnLoadStart(); 
         loadingInfo = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Single);
         GameManager.GetInstance().StartCoroutine(Update());
     }
