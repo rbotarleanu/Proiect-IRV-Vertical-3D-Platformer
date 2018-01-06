@@ -27,15 +27,22 @@ public class MainMenu : MonoBehaviour {
         newGameDialog.SetActive(false);
 
         // Listen for new game state
-        GameManager.OnStateChange += ((GameManager.GameState newState) =>
-        {
-            if (newState != GameManager.GameState.MainMenu)
-            {
-                gameObject.SetActive(false);
-            }
-        });
+        GameManager.OnStateChange += stateListener;
 
         InitializeButtonListeners();
+    }
+
+    private void stateListener(GameManager.GameState newState)
+    {
+        if (newState != GameManager.GameState.MainMenu)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnStateChange -= stateListener;
     }
 
     private void InitializeButtonListeners()
@@ -73,7 +80,7 @@ public class MainMenu : MonoBehaviour {
             GameManager.LoadLastGame();
         });
     }
-
+    
     void Update()
     {
     }

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class InGameMenuManager : MonoBehaviour {
 
     public Texture2D cursorTexture;
     public GameObject dialog;
+    public GameObject inGameMenuPanel;
     public Button exitToMainMenuButton;
     public Button saveGameButton;
     public Button dialogYes;
@@ -14,9 +16,15 @@ public class InGameMenuManager : MonoBehaviour {
 
     private void Start()
     {
+        gameObject.SetActive(false);
+        
         Cursor.SetCursor(cursorTexture, new Vector2(6, 0), CursorMode.ForceSoftware);
 
-        gameObject.SetActive(false);
+        exitToMainMenuButton.onClick.AddListener(() =>
+        {
+            GameManager.SetGameState(GameManager.GameState.MainMenu);
+            GameManager.LoadMainMenu();
+        });
 
         GameManager.OnStateChange += ((GameManager.GameState newState) =>
         {
@@ -27,8 +35,6 @@ public class InGameMenuManager : MonoBehaviour {
             else if (gameObject.activeInHierarchy)
             {
                 gameObject.SetActive(false);
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Confined;
             }
         });
     }

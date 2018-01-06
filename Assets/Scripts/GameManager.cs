@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityStandardAssets.Characters.FirstPerson;
 
 
 /* Singleton that controls game managers and scene flow. */
@@ -48,11 +49,12 @@ public class GameManager : MonoBehaviour {
 
         if (newState == GameState.InGameMenu)
         {
+            GameObject.Find("FPSController").GetComponent<FirstPersonController>().enabled = false;
             Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
             Cursor.lockState = CursorLockMode.None;
         } else if (newState == GameState.InGame)
         {
+            GameObject.Find("FPSController").GetComponent<FirstPersonController>().enabled = true;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Confined;
         }
@@ -101,6 +103,11 @@ public class GameManager : MonoBehaviour {
         LevelManager.LoadSceneAsync("Scene1");
         currentState = GameState.InGame;
         OnStateChange(currentState);
+    }
+
+    public static void LoadMainMenu()
+    {
+        LevelManager.LoadScene("MainMenu");
     }
 
     public static void LoadLastGame()
