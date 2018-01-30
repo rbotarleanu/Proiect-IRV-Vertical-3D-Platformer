@@ -33,7 +33,9 @@ public class GameManager : MonoBehaviour {
         {
             instance = this;
             DontDestroyOnLoad(this);
-            Init();
+
+            // Initialize sub-managers
+            AudioManager.Init();
         }
         else
         {
@@ -60,10 +62,6 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    private void Init()
-    {
-    }
-
 	// Update is called once per frame
 	void Update () {
         bool sceneLoaded = false;
@@ -72,6 +70,13 @@ public class GameManager : MonoBehaviour {
         {
             LevelManager.LoadSceneAsync("Scene1");
             sceneLoaded = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Backslash))
+        {
+            Debug.Log("SFX is: " + AudioManager.SfxIntensity);
+            Debug.Log("Voice is: " + AudioManager.VoiceIntensity);
+            Debug.Log("Music is: " + AudioManager.MusicIntensity);
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -107,7 +112,8 @@ public class GameManager : MonoBehaviour {
 
     public static void LoadMainMenu()
     {
-        LevelManager.LoadScene("MainMenu");
+        SetGameState(GameState.MainMenu);
+        LevelManager.LoadSceneAsync("MainMenu");
     }
 
     public static void LoadLastGame()

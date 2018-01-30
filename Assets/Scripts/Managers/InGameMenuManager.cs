@@ -13,19 +13,59 @@ public class InGameMenuManager : MonoBehaviour {
     public Button saveGameButton;
     public Button dialogYes;
     public Button dialogNo;
+    public Text dialogText;
+    
+    private const string exitToMainMenuText = "You will exit to the main menu. Are you sure?";
+    private const string saveGameText = "Are you sure you wish to save the game state?";
+
+    private enum DialogBacklink { // specifies which button was pressed for the common dialog
+        ExitToMainMenu,
+        SaveGame,
+        None
+    };
+
+    private DialogBacklink activeButton = DialogBacklink.None;
+
 
     private void Start()
     {
         gameObject.SetActive(false);
-        
+        dialog.SetActive(false);
+
         Cursor.SetCursor(cursorTexture, new Vector2(6, 0), CursorMode.ForceSoftware);
+
+        saveGameButton.onClick.AddListener(() =>
+        {
+            activeButton = DialogBacklink.SaveGame;
+            dialogText.text = saveGameText;
+            dialog.SetActive(false);
+        });
 
         exitToMainMenuButton.onClick.AddListener(() =>
         {
-            GameManager.SetGameState(GameManager.GameState.MainMenu);
-            GameManager.LoadMainMenu();
+            activeButton = DialogBacklink.ExitToMainMenu;
+            dialogText.text = exitToMainMenuText;
+            dialog.SetActive(true);
         });
 
+        dialogYes.onClick.AddListener(() => {
+            if (activeButton == DialogBacklink.ExitToMainMenu)
+            {
+                dialogText.text = "";
+                dialog.SetActive(false);
+                GameManager.LoadMainMenu();
+            } else
+            {
+                // TODO: perform state save
+            }
+        });
+
+        dialogNo.onClick.AddListener(() =>
+        {
+            dialogText.text = "";
+            dialog.SetActive(false);
+        });
+        
         GameManager.OnStateChange += ((GameManager.GameState newState) =>
         {
             if (newState == GameManager.GameState.InGameMenu)

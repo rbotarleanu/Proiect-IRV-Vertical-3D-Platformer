@@ -13,31 +13,40 @@ public class AudioManager {
     public enum AudioChannel
     {
         SFX,
-        Voice,
-        Music
+        MUSIC,
+        VOICE
     }
 
-    public static float sfxIntensity { get; private set; }
-    public static float musicIntensity { get; private set; }
-    public static float voiceIntensity { get; private set; }
+    public static float SfxIntensity { get; private set; }
+    public static float MusicIntensity { get; private set; }
+    public static float VoiceIntensity { get; private set; }
 
     public static void Init()
     {
-        sfxIntensity = PlayerPrefs.GetFloat("sfxIntensity", 0.5f);
-        musicIntensity = PlayerPrefs.GetFloat("musicIntensity", 0.5f);
-        voiceIntensity = PlayerPrefs.GetFloat("voiceIntensity", 0.5f);
+        Debug.Log("Initializing");
+        SfxIntensity = PlayerPrefs.GetFloat("sfxIntensity", 0.5f);
+        MusicIntensity = PlayerPrefs.GetFloat("musicIntensity", 0.5f);
+        VoiceIntensity = PlayerPrefs.GetFloat("voiceIntensity", 0.5f);
     }
 
-    public static void savePrefs()
+    public static void SavePrefs()
     {
-        PlayerPrefs.SetFloat("sfxIntensity", sfxIntensity);
-        PlayerPrefs.SetFloat("musicIntensity", musicIntensity);
-        PlayerPrefs.SetFloat("voiceIntensity", voiceIntensity);
+        PlayerPrefs.SetFloat("sfxIntensity", SfxIntensity);
+        PlayerPrefs.SetFloat("musicIntensity", MusicIntensity);
+        PlayerPrefs.SetFloat("voiceIntensity", VoiceIntensity);
     }
-
-    public static void changeIntensity(AudioChannel channel, float intensity)
+    
+    public static void ChangeChannelIntensity(AudioChannel audioChannel, float value)
     {
+        if (value < 0 || value > 1)
+            return;
 
+        switch (audioChannel)
+        {
+            case AudioChannel.SFX: SfxIntensity = value; break;
+            case AudioChannel.MUSIC: MusicIntensity= value; break;
+            case AudioChannel.VOICE: VoiceIntensity = value; break;
+        }
     }
 
     // Update is called once per frame
