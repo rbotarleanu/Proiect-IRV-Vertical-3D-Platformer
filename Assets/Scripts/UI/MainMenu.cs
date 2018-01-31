@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenu : MonoBehaviour {
+public class MainMenu : MonoBehaviour
+{
 
     public GameObject primarySection;
     public GameObject audioSection;
@@ -15,11 +16,15 @@ public class MainMenu : MonoBehaviour {
     public Button backToMainMenuButton;
     public Button yesButton;
     public Button noButton;
- 
+
+    private AudioSource audioSourceComponent;
+
     public Texture2D cursorTexture;
 
     private void Start()
     {
+        audioSourceComponent = GetComponent<AudioSource>();
+        audioSourceComponent.Stop();
         Cursor.SetCursor(cursorTexture, new Vector2(1, 0), CursorMode.ForceSoftware);
         GameManager.SetGameState(GameManager.GameState.MainMenu);
 
@@ -30,6 +35,8 @@ public class MainMenu : MonoBehaviour {
         GameManager.OnStateChange += stateListener;
 
         InitializeButtonListeners();
+
+        AudioManager.Play(AudioManager.AudioChannel.MUSIC, audioSourceComponent, true);
     }
 
     private void stateListener(GameManager.GameState newState)
@@ -43,6 +50,7 @@ public class MainMenu : MonoBehaviour {
     void OnDestroy()
     {
         GameManager.OnStateChange -= stateListener;
+        AudioManager.Stop(AudioManager.AudioChannel.MUSIC, audioSourceComponent);
     }
 
     private void InitializeButtonListeners()
@@ -70,7 +78,8 @@ public class MainMenu : MonoBehaviour {
             GameManager.StartNewGame();
         });
 
-        noButton.onClick.AddListener(() => {
+        noButton.onClick.AddListener(() =>
+        {
             newGameDialog.SetActive(false);
             primarySection.SetActive(true);
         });
@@ -80,9 +89,4 @@ public class MainMenu : MonoBehaviour {
             GameManager.LoadLastGame();
         });
     }
-    
-    void Update()
-    {
-    }
-
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,6 +22,10 @@ public class AudioManager {
     public static float MusicIntensity { get; private set; }
     public static float VoiceIntensity { get; private set; }
 
+    public static List<AudioSource> sfxSources = new List<AudioSource>();
+    public static List<AudioSource> musicSources = new List<AudioSource>();
+    public static List<AudioSource> voiceSources = new List<AudioSource>();
+
     public static void Init()
     {
         Debug.Log("Initializing");
@@ -35,7 +40,49 @@ public class AudioManager {
         PlayerPrefs.SetFloat("musicIntensity", MusicIntensity);
         PlayerPrefs.SetFloat("voiceIntensity", VoiceIntensity);
     }
-    
+
+    public static void Play(AudioChannel channel, AudioSource audioSource, bool loop)
+    {
+        float volume = 0;
+        switch (channel)
+        {
+            case AudioChannel.SFX:
+                volume = SfxIntensity;
+                sfxSources.Add(audioSource);
+                break;
+            case AudioChannel.MUSIC:
+                volume = MusicIntensity;
+                musicSources.Add(audioSource);
+                break;
+            case AudioChannel.VOICE:
+                volume = VoiceIntensity;
+                voiceSources.Add(audioSource);
+                break;
+        }
+        audioSource.volume = volume;
+        audioSource.Play();
+        audioSource.loop = loop;
+    }
+
+    public static void Stop(AudioChannel audioChannel, AudioSource audioSource)
+    {
+        switch (audioChannel)
+        {
+            case AudioChannel.SFX: sfxSources.Remove(audioSource); break;
+            case AudioChannel.MUSIC: musicSources.Remove(audioSource); break;
+            case AudioChannel.VOICE: voiceSources.Remove(audioSource); break;
+        }
+        audioSource.Stop();
+    }
+
+    public static void UpdateChannelSounds(List<AudioSource> sourceList, float volume)
+    {
+        foreach (AudioSource source in sourceList)
+        {
+            source.volume = volume;
+        }
+    }
+
     public static void ChangeChannelIntensity(AudioChannel audioChannel, float value)
     {
         if (value < 0 || value > 1)
@@ -43,9 +90,18 @@ public class AudioManager {
 
         switch (audioChannel)
         {
-            case AudioChannel.SFX: SfxIntensity = value; break;
-            case AudioChannel.MUSIC: MusicIntensity= value; break;
-            case AudioChannel.VOICE: VoiceIntensity = value; break;
+            case AudioChannel.SFX:
+                SfxIntensity = value;
+                UpdateChannelSounds(sfxSources, value);
+                break;
+            case AudioChannel.MUSIC:
+                MusicIntensity = value;
+                UpdateChannelSounds(musicSources, value);
+                break;
+            case AudioChannel.VOICE:
+                VoiceIntensity = value;
+                UpdateChannelSounds(voiceSources, value);
+                break;
         }
     }
 

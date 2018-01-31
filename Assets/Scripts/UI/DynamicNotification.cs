@@ -12,10 +12,12 @@ public class DynamicNotification : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        UserResources.OnCoinCollected += (() =>
-        {
-            displayMessage("Coin has been picked up!");
-        });
+        UserResources.OnCoinCollected += CoinCollectedHandler;
+    }
+
+    private void CoinCollectedHandler()
+    {
+        displayMessage("Coin has been picked up!");
     }
 
     private void displayMessage(string message)
@@ -31,6 +33,11 @@ public class DynamicNotification : MonoBehaviour
         
         textPopup.text = "";
         gameObject.SetActive(false);
+    }
+    
+    void OnDestroy()
+    {
+        UserResources.OnCoinCollected -= CoinCollectedHandler;
     }
 }
 	

@@ -12,23 +12,36 @@ public class ScoreComponent : MonoBehaviour {
         score.text = "0";
         gameObject.SetActive(false);
 
-        GameManager.OnStateChange += ((GameManager.GameState newState) => {
-            if (newState == GameManager.GameState.InGame) {
-                gameObject.SetActive(true);
-            } else {
-                if (gameObject.activeSelf == true)
-                    gameObject.SetActive(false);
-            }
-        });
-
-        UserResources.OnCoinCollected += (() =>
-        {
-            score.text = UserResources.coins.ToString();
-        });
+        GameManager.OnStateChange += StateChangeHandler;
+        UserResources.OnCoinCollected += CoinCollectedHandler;
 	}
-	
+
+    private void StateChangeHandler(GameManager.GameState newState)
+    {
+        if (newState == GameManager.GameState.InGame)
+        {
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            if (gameObject.activeSelf == true)
+                gameObject.SetActive(false);
+        }
+    }
+
+    private void CoinCollectedHandler()
+    {
+        score.text = UserResources.coins.ToString();
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnStateChange -= StateChangeHandler;
+        UserResources.OnCoinCollected -= CoinCollectedHandler;
+    }
+
     // Update is called once per frame
-	void Update () {
+    void Update () {
 		
 	}
 }

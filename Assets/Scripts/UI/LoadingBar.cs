@@ -9,22 +9,30 @@ public class LoadingBar : MonoBehaviour
 
     void Start()
     {
-        DontDestroyOnLoad(this);
-
+        DontDestroyOnLoad(gameObject);
         gameObject.SetActive(false); // loading screen is only active during async loading
 
-        LevelManager.OnLoadStart += () => // show the loading screen during loading
-        {
-            gameObject.SetActive(true);
-        };
+        LevelManager.OnLoadStart += LoadStartHandler;
+        LevelManager.OnLoadChange += LoadChangeHandler;
+    }
 
-        LevelManager.OnLoadChange += ((float value) => // update slider during loading
+    private void LoadStartHandler()
+    {
+        gameObject.SetActive(true);
+    }
+
+    private void LoadChangeHandler(float value)
+    {
+        loadingBar.value = value;
+        if (value == 1)
         {
-            loadingBar.value = value;
-            if (value == 1)
-            {
-                gameObject.SetActive(false);
-            }
-        });
+            gameObject.SetActive(false);
+        }
+    }
+
+    void OnDestroy()
+    {
+        LevelManager.OnLoadStart -= LoadStartHandler;
+        LevelManager.OnLoadChange -= LoadChangeHandler;
     }
 }

@@ -26,7 +26,6 @@ public class InGameMenuManager : MonoBehaviour {
 
     private DialogBacklink activeButton = DialogBacklink.None;
 
-
     private void Start()
     {
         gameObject.SetActive(false);
@@ -65,18 +64,25 @@ public class InGameMenuManager : MonoBehaviour {
             dialogText.text = "";
             dialog.SetActive(false);
         });
-        
-        GameManager.OnStateChange += ((GameManager.GameState newState) =>
+
+        GameManager.OnStateChange += StateChangeHandler;
+    }
+
+    private void StateChangeHandler(GameManager.GameState newState)
+    {
+        if (newState == GameManager.GameState.InGameMenu)
         {
-            if (newState == GameManager.GameState.InGameMenu)
-            {
-                gameObject.SetActive(true);
-            }
-            else if (gameObject.activeInHierarchy)
-            {
-                gameObject.SetActive(false);
-            }
-        });
+            gameObject.SetActive(true);
+        }
+        else if (gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    void OnDestroy()
+    {
+        GameManager.OnStateChange -= StateChangeHandler;
     }
 
     void Update()

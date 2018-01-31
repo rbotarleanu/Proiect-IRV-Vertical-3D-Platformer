@@ -30,6 +30,7 @@ public class VolumeSlidersController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        DontDestroyOnLoad(this);
         SetValuesToGlobal();
 
         GameManager.OnStateChange += ((GameManager.GameState newState) =>
