@@ -12,7 +12,7 @@ public class DynamicNotification : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        UserResources.OnCoinCollected += CoinCollectedHandler;
+        GameData.OnCoinCollected += CoinCollectedHandler;
     }
 
     private void CoinCollectedHandler()
@@ -37,7 +37,7 @@ public class DynamicNotification : MonoBehaviour
     
     void OnDestroy()
     {
-        UserResources.OnCoinCollected -= CoinCollectedHandler;
+        GameData.OnCoinCollected -= CoinCollectedHandler;
     }
 }
 	

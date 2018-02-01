@@ -19,7 +19,7 @@ public class CoinScript : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        UserResources.collectCoin();
+        GameData.CollectCoin();
         Destroy(gameObject);
     }
 }

@@ -28,10 +28,9 @@ public class AudioManager {
 
     public static void Init()
     {
-        Debug.Log("Initializing");
-        SfxIntensity = PlayerPrefs.GetFloat("sfxIntensity", 0.5f);
-        MusicIntensity = PlayerPrefs.GetFloat("musicIntensity", 0.5f);
-        VoiceIntensity = PlayerPrefs.GetFloat("voiceIntensity", 0.5f);
+        SfxIntensity = PlayerPrefs.GetFloat("sfxIntensity", 1.0f);
+        MusicIntensity = PlayerPrefs.GetFloat("musicIntensity", 1.0f);
+        VoiceIntensity = PlayerPrefs.GetFloat("voiceIntensity", 1.0f);
     }
 
     public static void SavePrefs()

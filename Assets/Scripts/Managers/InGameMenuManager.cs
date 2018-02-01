@@ -37,7 +37,7 @@ public class InGameMenuManager : MonoBehaviour {
         {
             activeButton = DialogBacklink.SaveGame;
             dialogText.text = saveGameText;
-            dialog.SetActive(false);
+            dialog.SetActive(true);
         });
 
         exitToMainMenuButton.onClick.AddListener(() =>
@@ -55,7 +55,7 @@ public class InGameMenuManager : MonoBehaviour {
                 GameManager.LoadMainMenu();
             } else
             {
-                // TODO: perform state save
+                GameData.Serialize();
             }
         });
 

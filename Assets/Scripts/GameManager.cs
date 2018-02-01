@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour {
     public delegate void StateChange(GameState newState);
     public static event StateChange OnStateChange;
 
+    public AudioClip Scene1BgMusic;
+    public AudioClip Scene2BgMusic;
+    private static AudioSource AudioComponent;
+
     public enum GameState {
         MainMenu,
         InGame,
@@ -36,6 +40,9 @@ public class GameManager : MonoBehaviour {
 
             // Initialize sub-managers
             AudioManager.Init();
+
+            AudioComponent = GetComponent<AudioSource>();
+            AudioManager.Play(AudioManager.AudioChannel.MUSIC, AudioComponent, true);
         }
         else
         {
@@ -82,6 +89,7 @@ public class GameManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.E))
         {
             LevelManager.LoadSceneAsync("Scene2");
+            ChangeMusic(GetInstance().Scene2BgMusic);
             sceneLoaded = true;
         }
 
@@ -103,16 +111,27 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    private static void ChangeMusic(AudioClip soundClip)
+    {
+        AudioComponent.clip = soundClip;
+        AudioManager.Stop(AudioManager.AudioChannel.MUSIC, AudioComponent);
+        AudioManager.Play(AudioManager.AudioChannel.MUSIC, AudioComponent, true);
+    }
+
     public static void StartNewGame()
     {
         LevelManager.LoadSceneAsync("Scene1");
         currentState = GameState.InGame;
+
+        ChangeMusic(GetInstance().Scene1BgMusic);
+
         OnStateChange(currentState);
     }
 
     public static void LoadMainMenu()
     {
         SetGameState(GameState.MainMenu);
+        AudioManager.Stop(AudioManager.AudioChannel.MUSIC, AudioComponent);
         LevelManager.LoadSceneAsync("MainMenu");
     }
 

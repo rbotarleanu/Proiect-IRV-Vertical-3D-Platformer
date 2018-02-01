@@ -13,7 +13,7 @@ public class ScoreComponent : MonoBehaviour {
         gameObject.SetActive(false);
 
         GameManager.OnStateChange += StateChangeHandler;
-        UserResources.OnCoinCollected += CoinCollectedHandler;
+        GameData.OnCoinCollected += CoinCollectedHandler;
 	}
 
     private void StateChangeHandler(GameManager.GameState newState)
@@ -31,13 +31,13 @@ public class ScoreComponent : MonoBehaviour {
 
     private void CoinCollectedHandler()
     {
-        score.text = UserResources.coins.ToString();
+        score.text = GameData.GetInstance().PickedUpCoins.ToString();
     }
 
     void OnDestroy()
     {
         GameManager.OnStateChange -= StateChangeHandler;
-        UserResources.OnCoinCollected -= CoinCollectedHandler;
+        GameData.OnCoinCollected -= CoinCollectedHandler;
     }
 
     // Update is called once per frame
