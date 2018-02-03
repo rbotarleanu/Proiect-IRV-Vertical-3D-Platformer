@@ -20,6 +20,7 @@ public class CoinScript : MonoBehaviour {
     private void OnTriggerEnter(Collider other)
     {
         GameData.CollectCoin();
+        AudioManager.PlayOnce(AudioManager.AudioChannel.SFX, AudioResources.Instance.CoinPickUp);
         Destroy(gameObject);
     }
 }

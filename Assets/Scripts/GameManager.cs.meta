@@ -1,11 +1,13 @@
 fileFormatVersion: 2
 guid: 5f299a9038bfe264eb1c5d9ea53bfcfd
-timeCreated: 1514985126
+timeCreated: 1517663928
 licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - Scene1BgMusic: {fileID: 8300000, guid: 33d3d5ebb71719047baeae36c41e52d6, type: 3}
+  - Scene2BgMusic: {fileID: 8300000, guid: 7c371ef624325074abc797571e18b5dc, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

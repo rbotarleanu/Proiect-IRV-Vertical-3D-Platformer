@@ -63,6 +63,19 @@ public class AudioManager {
         audioSource.loop = loop;
     }
 
+    public static void PlayOnce(AudioChannel channel, AudioSource audioSource)
+    {
+        float volume = 0;
+        switch (channel)
+        {
+            case AudioChannel.SFX: volume = SfxIntensity; break;
+            case AudioChannel.MUSIC: volume = MusicIntensity; break;
+            case AudioChannel.VOICE: volume = VoiceIntensity; break;
+        }
+        audioSource.volume = volume;
+        audioSource.Play();
+    }
+
     public static void Stop(AudioChannel audioChannel, AudioSource audioSource)
     {
         switch (audioChannel)
@@ -71,7 +84,8 @@ public class AudioManager {
             case AudioChannel.MUSIC: musicSources.Remove(audioSource); break;
             case AudioChannel.VOICE: voiceSources.Remove(audioSource); break;
         }
-        audioSource.Stop();
+        if (audioSource != null)
+            audioSource.Stop();
     }
 
     public static void UpdateChannelSounds(List<AudioSource> sourceList, float volume)

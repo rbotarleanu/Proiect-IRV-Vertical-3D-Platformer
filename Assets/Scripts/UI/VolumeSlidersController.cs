@@ -20,6 +20,8 @@ public class VolumeSlidersController : MonoBehaviour {
 
     public void SetValuesToGlobal()
     {
+        if (sfxDisplay == null || musicDisplay == null || voiceDisplay == null)
+            return;
         sfxDisplay.text = GetDisplayValueFromIntensity(AudioManager.SfxIntensity);
         sfxSlider.value = AudioManager.SfxIntensity;
         musicDisplay.text = GetDisplayValueFromIntensity(AudioManager.MusicIntensity);

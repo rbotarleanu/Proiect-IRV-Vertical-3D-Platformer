@@ -6,7 +6,8 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 
 /* Singleton that controls game managers and scene flow. */
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     /* Only one instance per game. */
     private static GameManager instance;
@@ -18,7 +19,11 @@ public class GameManager : MonoBehaviour {
     public AudioClip Scene2BgMusic;
     private static AudioSource AudioComponent;
 
-    public enum GameState {
+    private FirstPersonController sceneFPSController;
+    private AudioSource sceneCharacterAudio;
+
+    public enum GameState
+    {
         MainMenu,
         InGame,
         InGameMenu
@@ -43,13 +48,14 @@ public class GameManager : MonoBehaviour {
 
             AudioComponent = GetComponent<AudioSource>();
             AudioManager.Play(AudioManager.AudioChannel.MUSIC, AudioComponent, true);
+            LevelManager.OnLoadChange += WaitForSceneLoad;
         }
         else
         {
             Destroy(gameObject);
         }
     }
-    
+
     public static void SetGameState(GameState newState)
     {
         currentState = newState;
@@ -58,32 +64,45 @@ public class GameManager : MonoBehaviour {
 
         if (newState == GameState.InGameMenu)
         {
-            GameObject.Find("FPSController").GetComponent<FirstPersonController>().enabled = false;
+            GetInstance().sceneFPSController.enabled = false;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-        } else if (newState == GameState.InGame)
+        }
+        else if (newState == GameState.InGame)
         {
-            GameObject.Find("FPSController").GetComponent<FirstPersonController>().enabled = true;
+            GetInstance().sceneFPSController.enabled = true;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Confined;
         }
     }
 
-	// Update is called once per frame
-	void Update () {
+    private void WaitForSceneLoad(float value)
+    {
+        if (value < 1)
+            return;
+
+        AudioManager.Stop(AudioManager.AudioChannel.VOICE, sceneCharacterAudio);
+
+        // Scene has been loaded, we can bind the FirstPersonCharacter component
+        GameObject fpsObject = GameObject.Find("FPSController");
+        if (fpsObject != null)
+        {
+            sceneFPSController = fpsObject.GetComponent<FirstPersonController>(); sceneCharacterAudio = fpsObject.GetComponent<AudioSource>();
+            sceneCharacterAudio = fpsObject.GetComponent<AudioSource>();
+            AudioManager.Play(AudioManager.AudioChannel.VOICE, sceneCharacterAudio, false);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         bool sceneLoaded = false;
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            Debug.Log("Key pressed");
             LevelManager.LoadSceneAsync("Scene1");
             sceneLoaded = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Backslash))
-        {
-            Debug.Log("SFX is: " + AudioManager.SfxIntensity);
-            Debug.Log("Voice is: " + AudioManager.VoiceIntensity);
-            Debug.Log("Music is: " + AudioManager.MusicIntensity);
         }
 
         if (Input.GetKeyDown(KeyCode.E))
@@ -122,9 +141,7 @@ public class GameManager : MonoBehaviour {
     {
         LevelManager.LoadSceneAsync("Scene1");
         currentState = GameState.InGame;
-
         ChangeMusic(GetInstance().Scene1BgMusic);
-
         OnStateChange(currentState);
     }
 
@@ -140,4 +157,4 @@ public class GameManager : MonoBehaviour {
         // TODO
     }
 
- }
+}
