@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,6 +23,9 @@ public class GameManager : MonoBehaviour
     private FirstPersonController sceneFPSController;
     private AudioSource sceneCharacterAudio;
 
+    private bool NeedToUpdatePlayerPosition = false;
+    private Vector3 NewPlayerPosition;
+
     public enum GameState
     {
         MainMenu,
@@ -30,12 +34,13 @@ public class GameManager : MonoBehaviour
     }
 
     private static GameState currentState;
-
+    public static string currentScene = "MainMenu";
+    
     public static GameManager GetInstance()
     {
         return instance;
     }
-
+    
     private void Awake()
     {
         if (!instance)
@@ -90,27 +95,37 @@ public class GameManager : MonoBehaviour
             sceneFPSController = fpsObject.GetComponent<FirstPersonController>(); sceneCharacterAudio = fpsObject.GetComponent<AudioSource>();
             sceneCharacterAudio = fpsObject.GetComponent<AudioSource>();
             AudioManager.Play(AudioManager.AudioChannel.VOICE, sceneCharacterAudio, false);
+
+            if (NeedToUpdatePlayerPosition)
+            {
+                sceneFPSController.transform.position = NewPlayerPosition;
+                NeedToUpdatePlayerPosition = false;
+            }
         }
     }
+
+    public static void LoadScene(string sceneName)
+    {
+        LevelManager.LoadSceneAsync(sceneName);
+        currentState = GameState.InGame;
+        currentScene = sceneName;
+        ChangeMusic(GetInstance().Scene1BgMusic);
+        AudioClip CorrectClip = sceneName.Equals("Scene1") ? GetInstance().Scene1BgMusic :
+                        GetInstance().Scene2BgMusic;
+        ChangeMusic(CorrectClip);
+
+        currentState = GameState.InGame;
+        OnStateChange(currentState);
+    }
+
 
     // Update is called once per frame
     void Update()
     {
-        bool sceneLoaded = false;
-
         if (Input.GetKeyDown(KeyCode.Q))
-        {
-            Debug.Log("Key pressed");
-            LevelManager.LoadSceneAsync("Scene1");
-            sceneLoaded = true;
-        }
-
+            LoadScene("Scene1");
         if (Input.GetKeyDown(KeyCode.E))
-        {
-            LevelManager.LoadSceneAsync("Scene2");
-            ChangeMusic(GetInstance().Scene2BgMusic);
-            sceneLoaded = true;
-        }
+            LoadScene("Scene2");
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -119,15 +134,11 @@ public class GameManager : MonoBehaviour
             else if (currentState == GameState.InGame)
                 SetGameState(GameState.InGameMenu);
         }
+    }
 
-        if (sceneLoaded)
-        {
-            if (currentState != GameState.InGame)
-            {
-                currentState = GameState.InGame;
-                OnStateChange(currentState);
-            }
-        }
+    public static void UpdatePlayerPosition(Vector3 playerPosition)
+    {
+        GetInstance().sceneFPSController.transform.position = playerPosition;
     }
 
     private static void ChangeMusic(AudioClip soundClip)
@@ -139,10 +150,7 @@ public class GameManager : MonoBehaviour
 
     public static void StartNewGame()
     {
-        LevelManager.LoadSceneAsync("Scene1");
-        currentState = GameState.InGame;
-        ChangeMusic(GetInstance().Scene1BgMusic);
-        OnStateChange(currentState);
+        LoadScene("Scene1");
     }
 
     public static void LoadMainMenu()
@@ -154,7 +162,28 @@ public class GameManager : MonoBehaviour
 
     public static void LoadLastGame()
     {
-        // TODO
+        GameData.Deserialize();
+    }
+
+    public static void HandleGameReload(string scene, Vector3 playerPosition)
+    {
+        if (AudioManager.musicSources.Contains(AudioComponent))
+            AudioManager.Stop(AudioManager.AudioChannel.MUSIC, AudioComponent);
+        AudioManager.Play(AudioManager.AudioChannel.MUSIC, AudioComponent, true);
+            
+        GetInstance().NeedToUpdatePlayerPosition = true;
+        GetInstance().NewPlayerPosition = playerPosition;
+        LoadScene(scene);
+    }
+
+    public static Vector3 GetPlayerPosition()
+    {
+        return GetInstance().sceneFPSController.transform.position;
+    }
+
+    public static Quaternion GetPlayerRotation()
+    {
+        return GetInstance().sceneFPSController.transform.rotation;
     }
 
 }

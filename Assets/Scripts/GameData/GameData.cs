@@ -15,26 +15,36 @@ public class GameData {
     private static string XMLFileName = "./GameData.xml";
     private static string serializationPath = Application.persistentDataPath + XMLFileName;
 
+    public delegate void reload();
+    public static event reload OnReload;
+
     [XmlElement("PickedUpCoins")]
     public int PickedUpCoins;
-    [XmlElement("PickedUpPowerUps")]
-    public int PickedUpPowerUps;
+    [XmlElement("SFXVolume")]
+    public float SfxVolume;
+    [XmlElement("MusicVolume")]
+    public float MusicVolume;
+    [XmlElement("VoiceVolume")]
+    public float VoiceVolume;
+    [XmlElement("CurrentScene")]
+    public string CurrentScene;
+    [XmlArray("CollectedCoins")]
+    public List<string> CollectedCoins;
+    [XmlElement("PlayerPosition")]
+    public Vector3 PlayerPosition;
 
-    public delegate void CoinCollected();
+    public delegate void CoinCollected(bool onReload);
     public static event CoinCollected OnCoinCollected;
 
-    public delegate void PowerupPickedUp();
-    public static event PowerupPickedUp OnPowerupPicked;
-
-    public static void CollectCoin()
+    public static void CollectCoin(string coin)
     {
-        ++GetInstance().PickedUpCoins;
-        OnCoinCollected();
-    }
+        GameData instance = GetInstance();
+        ++instance.PickedUpCoins;
 
-    public static void PickPowerUp()
-    {
-        ++GetInstance().PickedUpPowerUps;
+        if (instance.CollectedCoins == null)
+            instance.CollectedCoins = new List<string>();
+        instance.CollectedCoins.Add(coin);
+        OnCoinCollected(false);
     }
 
     public GameData()
@@ -47,17 +57,61 @@ public class GameData {
         return Instance;
     }
 
-	// Use this for initialization
-	void Start () {
-	}
+    // Use this for initialization
+    void Start() {
+    }
+
+    public void SyncAudioSettingsWithAudioManager()
+    {
+        SfxVolume = AudioManager.SfxIntensity;
+        MusicVolume = AudioManager.MusicIntensity;
+        VoiceVolume = AudioManager.VoiceIntensity;
+    }
 
     public static void Serialize()
     {
-        var serializer = new XmlSerializer(typeof(GameData));
-        var stream = new FileStream(serializationPath, FileMode.Create);
+        GetInstance().SyncAudioSettingsWithAudioManager();
+        GetInstance().CurrentScene = GameManager.currentScene;
+        GetInstance().PlayerPosition = GameManager.GetPlayerPosition();
+
+        XmlSerializer serializer = new XmlSerializer(typeof(GameData));
+        FileStream stream = new FileStream(serializationPath, FileMode.Create);
         serializer.Serialize(stream, Instance);
         stream.Close();
-        Debug.Log("Saved to: " + serializationPath);
+    }
+
+    public static void Deserialize()
+    {
+        if (!File.Exists(serializationPath))
+            return;
+
+        XmlSerializer serializer = new XmlSerializer(typeof(GameData));
+        FileStream stream = new FileStream(serializationPath, FileMode.Open);
+        try
+        {
+            Instance = serializer.Deserialize(stream) as GameData;
+            stream.Close();
+            Instance.UpdateGameData();
+        } catch (IOException e)
+        {
+            Debug.LogError("Failed to deserialize game data: " + e);
+        } finally
+        {
+            stream.Close();
+        }
+    }
+
+    public void UpdateGameData()
+    {
+        OnCoinCollected(true);
+
+        AudioManager.ChangeChannelIntensity(AudioManager.AudioChannel.SFX, SfxVolume);
+        AudioManager.ChangeChannelIntensity(AudioManager.AudioChannel.MUSIC, MusicVolume);
+        AudioManager.ChangeChannelIntensity(AudioManager.AudioChannel.VOICE, VoiceVolume);
+
+        OnReload();
+
+        GameManager.HandleGameReload(CurrentScene, PlayerPosition);
     }
 
     // Update is called once per frame

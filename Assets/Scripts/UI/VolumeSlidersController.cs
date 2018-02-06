@@ -32,7 +32,6 @@ public class VolumeSlidersController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        DontDestroyOnLoad(this);
         SetValuesToGlobal();
 
         GameManager.OnStateChange += ((GameManager.GameState newState) =>
@@ -40,6 +39,8 @@ public class VolumeSlidersController : MonoBehaviour {
             if (newState == GameManager.GameState.InGameMenu)
                 SetValuesToGlobal();
         });
+
+        GameData.OnReload += SetValuesToGlobal;
 
         // Add listeners
         sfxSlider.onValueChanged.AddListener((float newValue) =>
@@ -69,4 +70,9 @@ public class VolumeSlidersController : MonoBehaviour {
     void Update () {
 		
 	}
+
+    void OnDestroy()
+    {
+        GameData.OnReload -= SetValuesToGlobal;
+    }
 }

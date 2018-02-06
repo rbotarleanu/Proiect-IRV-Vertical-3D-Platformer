@@ -55,6 +55,8 @@ public class InGameMenuManager : MonoBehaviour {
                 GameManager.LoadMainMenu();
             } else
             {
+                dialogText.text = "";
+                dialog.SetActive(false);
                 GameData.Serialize();
             }
         });
@@ -74,7 +76,8 @@ public class InGameMenuManager : MonoBehaviour {
         {
             gameObject.SetActive(true);
         }
-        else if (gameObject.activeInHierarchy)
+        else if (newState == GameManager.GameState.InGame &&
+                 gameObject.activeInHierarchy)
         {
             gameObject.SetActive(false);
         }

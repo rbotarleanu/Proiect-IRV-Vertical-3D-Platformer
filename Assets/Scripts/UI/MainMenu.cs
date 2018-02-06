@@ -32,14 +32,14 @@ public class MainMenu : MonoBehaviour
         newGameDialog.SetActive(false);
 
         // Listen for new game state
-        GameManager.OnStateChange += stateListener;
+        GameManager.OnStateChange += StateListener;
 
         InitializeButtonListeners();
 
         AudioManager.Play(AudioManager.AudioChannel.MUSIC, audioSourceComponent, true);
     }
 
-    private void stateListener(GameManager.GameState newState)
+    private void StateListener(GameManager.GameState newState)
     {
         if (newState != GameManager.GameState.MainMenu)
         {
@@ -49,7 +49,7 @@ public class MainMenu : MonoBehaviour
 
     void OnDestroy()
     {
-        GameManager.OnStateChange -= stateListener;
+        GameManager.OnStateChange -= StateListener;
         AudioManager.Stop(AudioManager.AudioChannel.MUSIC, audioSourceComponent);
     }
 

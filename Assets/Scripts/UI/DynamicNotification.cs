@@ -15,9 +15,10 @@ public class DynamicNotification : MonoBehaviour
         GameData.OnCoinCollected += CoinCollectedHandler;
     }
 
-    private void CoinCollectedHandler()
+    private void CoinCollectedHandler(bool onReload)
     {
-        displayMessage("Coin has been picked up!");
+        if (!onReload)
+            displayMessage("Coin has been picked up!");
     }
 
     private void displayMessage(string message)

@@ -29,7 +29,7 @@ public class ScoreComponent : MonoBehaviour {
         }
     }
 
-    private void CoinCollectedHandler()
+    private void CoinCollectedHandler(bool onReload)
     {
         score.text = GameData.GetInstance().PickedUpCoins.ToString();
     }
