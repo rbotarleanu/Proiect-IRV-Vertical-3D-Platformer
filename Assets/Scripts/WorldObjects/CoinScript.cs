@@ -10,7 +10,7 @@ public class CoinScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        GameObjectName = gameObject.name;
+        GameObjectName = GameManager.currentScene + "_" + gameObject.name;
         List<string> CollectedCoinsNames = GameData.GetInstance().CollectedCoins;
         if (CollectedCoinsNames != null && CollectedCoinsNames.Contains(GameObjectName))
             Destroy(gameObject);
