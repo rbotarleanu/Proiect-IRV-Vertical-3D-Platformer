@@ -47,9 +47,11 @@ public class GameData {
         OnCoinCollected(false);
     }
 
-    public GameData()
+    public void Reset()
     {
-
+        PickedUpCoins = 0;
+        CollectedCoins.Clear();
+        OnCoinCollected(true);
     }
 
     public static GameData GetInstance()

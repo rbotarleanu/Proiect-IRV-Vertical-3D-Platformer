@@ -75,6 +75,7 @@ public class MainMenu : MonoBehaviour
 
         yesButton.onClick.AddListener(() =>
         {
+            GameData.GetInstance().Reset();
             GameManager.StartNewGame();
         });
 
