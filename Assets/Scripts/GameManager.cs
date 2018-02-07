@@ -109,7 +109,6 @@ public class GameManager : MonoBehaviour
         LevelManager.LoadSceneAsync(sceneName);
         currentState = GameState.InGame;
         currentScene = sceneName;
-        ChangeMusic(GetInstance().Scene1BgMusic);
         AudioClip CorrectClip = sceneName.Equals("Scene1") ? GetInstance().Scene1BgMusic :
                         GetInstance().Scene2BgMusic;
         ChangeMusic(CorrectClip);

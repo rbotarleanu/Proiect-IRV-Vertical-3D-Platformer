@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerupScript : MonoBehaviour {
+public class LevelEndScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -13,4 +13,9 @@ public class PowerupScript : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    private void OnTriggerEnter(Collider other)
+    {
+        GameManager.LoadScene("Scene2");
+    }
 }

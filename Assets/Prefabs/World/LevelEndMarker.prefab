@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 23778025422876570}
   - component: {fileID: 114335777212981626}
   m_Layer: 0
-  m_Name: WaterPower
+  m_Name: LevelEndMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
