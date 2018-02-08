@@ -50,7 +50,7 @@ public class GameData {
     public void Reset()
     {
         PickedUpCoins = 0;
-        CollectedCoins.Clear();
+        if (CollectedCoins != null) CollectedCoins.Clear();
         OnCoinCollected(true);
     }
 
